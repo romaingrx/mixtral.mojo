@@ -3,12 +3,18 @@ from sys import argv
 from runtime.llcl import num_cores
 from config import MixtralConfig
 
+from io import read_file
+from types import FileBuf
+from tokenizer import Tokenizer
+
 var workers = 0
+
 
 fn print_usage():
     print("Usage: mojo mixtral.mojo <snapshot> [options]")
     print(
-        'Example: mojo mixtral.mojo mixtral-snapshot -s 99 -n 256 -t 0.5 -i "Luke, I am your"'
+        'Example: mojo mixtral.mojo mixtral-snapshot -s 99 -n 256 -t 0.5 -i "Luke, I am'
+        ' your"'
     )
     print("Options:")
     print("  -s <int>    random seed, default time.now()")
@@ -18,9 +24,10 @@ fn print_usage():
     print("  -z          tokenizer path")
     print("  -j          number of workers to use, default num_cores()")
 
+
 fn main() raises:
     workers = num_cores()
-    var tokenizer = StringRef("tokenizer.bin")
+    var tokenizer_path = StringRef("tokenizer.bin")
     var checkpoint = StringRef("")
     var temperature = 0.9
     var steps = 256
@@ -40,7 +47,7 @@ fn main() raises:
             if args[i] == "-n":
                 steps = atol(args[i + 1])
             if args[i] == "-z":
-                tokenizer = args[i + 1]
+                tokenizer_path = args[i + 1]
             if args[i] == "-s":
                 rng_seed = atol(args[i + 1])
             if args[i] == "-i":
@@ -69,3 +76,12 @@ fn main() raises:
         print_usage()
         return
 
+    var tbuf: FileBuf = FileBuf()
+    read_file(tokenizer_path, tbuf)
+    var tokenizer = Tokenizer(32000, tbuf)  # TODO : fix dynamic vocab size
+
+    var prompt_tokens = DynamicVector[Int]()
+
+    if prompt:
+        tokenizer.encode(prompt_tokens, prompt)
+        print("Prompt: " + prompt + " with " + prompt_tokens.size + " tokens")
