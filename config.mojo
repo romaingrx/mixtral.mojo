@@ -63,6 +63,11 @@ struct MixtralConfig:
         self.rope_theta = rope_theta
         self.attention_dropout = attention_dropout
 
+        self.pad_token_id = pad_token_id
+        self.bos_token_id = bos_token_id
+        self.eos_token_id = eos_token_id
+        self.tie_word_embeddings = tie_word_embeddings
+
         self.num_experts_per_tok = num_experts_per_tok
         self.num_local_experts = num_local_experts
         self.output_router_logits = output_router_logits
