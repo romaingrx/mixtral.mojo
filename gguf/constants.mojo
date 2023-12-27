@@ -191,6 +191,35 @@ struct GGUFValueType:
         # TODO: need help with 64-bit types in Python
         else:
             raise "Unsupported type"
+    
+    @staticmethod
+    fn get_dtype(val : Int) raises -> DType:
+        if val == 0:
+            return DType.uint8
+        elif val == 1:
+            return DType.int8
+        elif val == 2:
+            return DType.uint16
+        elif val == 3:
+            return DType.int16
+        elif val == 4:
+            return DType.uint32
+        elif val == 5:
+            return DType.int32
+        elif val == 6:
+            return DType.float32
+        elif val == 7:
+            return DType.bool
+        elif val == 10:
+            return DType.uint64
+        elif val == 11:
+            return DType.int64
+        elif val == 12:
+            return DType.float64
+        else:
+            raise "Unsupported type"
+
+    
 
 @register_passable("trivial")
 struct GGMLQuantizationType:
